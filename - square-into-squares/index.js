@@ -31,7 +31,6 @@ function iteration(square, root) {
 
 function getNextSquareRoot(remains) {
     let middle = Math.ceil(remains * 2 / 3);
-    console.log(remains, middle, Math.sqrt(middle))
     while (Math.trunc(Math.sqrt(middle)) !== Math.sqrt(middle)) {
         middle++
     }
@@ -45,27 +44,12 @@ function assertResult(result, target) {
     return square === sum;
 }
 
-// console.log(decompose(85986)); // [1, 3, 6, 23, 414, 85985]
-// console.log(decompose(50)); // [1, 3, 5, 8, 49] 1 + 9 + 25 + 64 + 2401 = 2500
-// console.log(decompose(11)); // [1, 2, 4, 10] 1 + 4 + 16 + 100 = 121
-// console.log(decompose(7)); //  [2, 3, 6]
-// console.log(decompose(4)) // "Nothing"
-// console.log(decompose(2)) // "Nothing"
+console.log(decompose(85986)); // [1, 3, 6, 23, 414, 85985]
+console.log(decompose(50)); // [1, 3, 5, 8, 49] 1 + 9 + 25 + 64 + 2401 = 2500
+console.log(decompose(11)); // [1, 2, 4, 10] 1 + 4 + 16 + 100 = 121
+console.log(decompose(7)); //  [2, 3, 6]
+console.log(decompose(4)) // "Nothing"
+console.log(decompose(2)) // "Nothing"
 
-
-function temp(n) {
-    if (n - 1 > 0) {
-        return n + d(n - 1);
-    }
-
-    return n;
-}
-
-function d(n) {
-}
-
-function next(n) {
-
-}
 
 
