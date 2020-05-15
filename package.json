@@ -5,7 +5,10 @@
   "repository": "https://github.com/c0sx/codewars.git",
   "author": "Tweek <vallkhale@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "jest": "^26.0.1"
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.0.0",
+    "jest": "^26.0.1",
+    "prettier": "^2.0.5"
   }
 }
