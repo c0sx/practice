@@ -1,0 +1,11 @@
+{
+  "name": "codewars",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/c0sx/codewars.git",
+  "author": "Tweek <vallkhale@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "jest": "^26.0.1"
+  }
+}
