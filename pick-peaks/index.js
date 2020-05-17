@@ -1,45 +1,72 @@
 function pickPeaks(arr) {
-    // скипнуть края опускающиеся вначале и поднимающиеся в конце
-    const sliced = slice(arr)
-    const sliced2 = slice(sliced.reverse()).reverse()
+    const chunks = splitToChunks(arr);
+    let iter = 0;
 
-    // разбить на чанки
-    // ищем когда индекс когда начнется подъем
-    const extremum = [];
-    let isMax = false;
-    const index = sliced2.findIndex((one, index, original) => {
-        const next = original[index + 1];
-        if (next < one && !isMax) {
-            extremum.push(index)
-            isMax = true;
-            return false;
+    return chunks.reduce((acc, current, index) => {
+        if (index === 0 && !firstChunk(current)) {
+            iter += current.length
+            return acc;
+        } else if (index === chunks.length - 1 && !lastChunk(current)) {
+            iter += current.length
+            return acc;
         }
 
-        return next > one && isMax;
-    });
+        const peak = Math.max(...current);
+        const currentIndex = current.findIndex(one => one === peak);
+        const pos = currentIndex + iter;
 
-    // найти максимум в чанке
-    return sliced2
+        iter += current.length;
+        acc.pos.push(pos);
+        acc.peaks.push(peak);
+        return acc;
+    }, { pos: [], peaks: [] });
 }
 
-function slice(arr) {
-    let i;
-    for (i = 1; i < arr.length; ++i) {
-        const prev = arr[i - 1];
-        const current = arr[i];
-        if (current > prev) {
-            break;
+function firstChunk(chunk) {
+    const peak = Math.max(...chunk);
+    const index = chunk.indexOf(peak);
+    return [0, chunk.length - 1].includes(index) === false;
+}
+
+function lastChunk(chunk) {
+    const result = chunk.every((value, index, original) => {
+        if (index + 1 > original.length - 1) {
+            return true;
+        }
+
+        const next = original[index + 1];
+        return value <= next;
+    });
+
+    return result === false;
+}
+
+function splitToChunks(arr) {
+    const chunks = [];
+
+    while(arr.length) {
+        let isMax = false;
+        const index = arr.findIndex((one, index, original) => {
+            const next = original[index + 1];
+            if (next < one && !isMax) {
+                isMax = true;
+                return false;
+            }
+
+            return next > one && isMax;
+        });
+
+        if (index === -1) {
+            chunks.push([...arr])
+            arr.splice(-arr.length);
+        }
+        else {
+            chunks.push(arr.slice(0, index + 1));
+            arr.splice(0, index + 1);
         }
     }
 
-    return arr.slice(i - 1);
+    return chunks;
 }
 
 module.exports = pickPeaks;
-
-// 1, 2, 3, 6, 4, 1, 2, 3, 2, 1
-// [1, 2, 3, 5, 4, 1], [2, 3, 2, 1]
-
-// 3, 2, 3, 6, 4, 1, 2, 3, 2, 1, 2, 3
-// 2, 3, 6, 4, 1, 2, 3, 2, 1, 2, 3
-// [2, 3, 6, 4, 1], [2, 3, 2, 1]
