@@ -1,7 +1,7 @@
 module.exports = {
     clearMocks: true,
     collectCoverage: true,
-    collectCoverageFrom: ["src/**/*.ts"],
+    collectCoverageFrom: ["**/*.js"],
     coverageReporters: ["lcov", "html", "text"],
     coverageDirectory: "coverage",
     coveragePathIgnorePatterns: [
