@@ -1,160 +1,176 @@
-const nodes = [];
-const finished = new Set();
-const keyMap = [8, 2, 4, 1, 2, 8, 5, 6, 8, 5, 6];
+const grid = require("./grid")
 
-//  [4,1,3],
-//  [2,8,0],
-//  [7,6,5]
+const slidePuzzle = (input, snapshots) => {
+    const sequence = [];
 
-const slidePuzzle = (input) => {
-    const target = findTargetState(input);
-    nodes.push({
-        node: input,
-        length: 0,
-    });
-
-    //   return [8, 2, 4, 1, 2, 8, 5, 6, 8, 5, 6];
-    generateGraph(target);
-    return [];
-};
-
-const generateGraph = (target) => {
     let i = 0;
-    while (!finished.has(JSON.stringify(target))) {
-        console.log(i);
-        const inputs = []
-            .concat(nodes.find(row => row.length === i))
-            .filter(Boolean);
-
-        inputs.forEach(row => processGraph(row.node, i, target));
+    while (!isFinished(input) && i < 100) {
         i++;
+
+        const currentMove = getMove(input, sequence)
+        if (!currentMove) {
+            return sequence;
+        }
+
+        sequence.push(currentMove);
+        move(input, currentMove);
+        snapshots && snapshots.push([currentMove, input.map(row => row.slice())]);
     }
 
-    console.log("target found", finished.has(JSON.stringify(target)), finished.size);
-};
+    return sequence;
+}
 
-const processGraph = (input, length, target) => {
-    const availableMoves = findAvailableMoves(input, target);
-    // .filter(move => keyMap[length] === move);
+// найти самую верхнюю строку в которой нужно произвести изменения
+// найти следующий тайл, который нужно поместить в верхнуюю строку
+// если это не последняя цифра строки, то просто разместить в нужном поле не трогая уже зафиксированные части ранее
+// для того что бы сдвинуть число в нужном направлении, нужно поставить в это место ноль путем прокрутки цифр
+// если это последняя цифра в строке, то поместите ее на позицию прямо под ее правильным местом и пробел под нее
+// далее хак который игнорирует фиксацию элементов: Вниз, вниз, право, вверх, лево, вверх,право, вниз, лево, вверх
 
-    // console.log(input, availableMoves);
+// не трогать части которые уже были собраны -- помечать собранную строку перед поворотом как законченную
+// собрать первую строку
+// научиться перемещать цифру в нужную позицию с сохранением истории перемещения
+// повернуть паззл
 
-    const nextNodes = availableMoves
-        .map(move => changeTile(input, move))
-        .filter(node => !finished.has(JSON.stringify(node)));
+const findAvailableMoves = (input) => {
+    const space = grid.findCoordinatesOfEmptyCell(input);
 
-    finished.add(JSON.stringify(input));
-    console.log("finished", input);
-    nextNodes.forEach(nextNode => {
-        const index = nodes.findIndex(storedNode => {
-            return JSON.stringify(nextNode) === JSON.stringify(storedNode);
-        });
+    const higher = getHigherTile(input, space);
+    const leftHand = getLeftHandTile(input, space);
+    const rightHand = getRightHandTile(input, space);
+    const lower = getLowerTile(input, space);
 
-        if (index === -1) {
-            return nodes.push({
-                node: nextNode,
-                length: length + 1,
-            });
-        }
+    return [higher, leftHand, rightHand, lower]
+}
 
-        if (nodes[index].length > length + 1) {
-            nodes[index].length = length + 1;
-        }
+const getHigherTile = (input, [rowIndex, cellIndex]) => {
+    if (rowIndex <= 0 || isRowLinedUp(input, rowIndex - 1)) {
+        return;
+    }
+
+    return getTile(input, rowIndex - 1, cellIndex)
+}
+
+const getLeftHandTile = (input, [rowIndex, cellIndex]) => {
+    if (cellIndex <= 0 || isCellLinedUp(input, rowIndex, cellIndex - 1)) {
+        return;
+    }
+
+    return getTile(input, rowIndex, cellIndex - 1)
+}
+
+const getRightHandTile = (input, [rowIndex, cellIndex]) => {
+    const rowLength = input[rowIndex].length;
+
+    if (cellIndex >= rowLength) {
+        return;
+    }
+
+    return getTile(input, rowIndex, cellIndex + 1)
+}
+
+const getLowerTile = (input, [rowIndex, cellIndex]) => {
+    if (rowIndex >= input.length - 1) {
+        return;
+    }
+
+    return input[rowIndex + 1][cellIndex]
+}
+
+const getTile = (input, rowIndex, cellIndex) => input[rowIndex][cellIndex];
+
+const isRowLinedUp = (input, rowIndex) => {
+    // если rowIndex последние два ряда
+    if (rowIndex === input.length - 1 || rowIndex === input.length - 2) {
+        return false;
+    }
+
+    const rowLength = input[rowIndex].length;
+
+    const expected = Array.from({ length: input[rowIndex].length }).map((one, index) => {
+        return index + 1 + rowLength * rowIndex;
     });
-};
 
-const changeTile = (input, tile) => {
-    const [zeroRow, zeroCell] = findEmptyCell(input);
-    const [targetRow, targetCell] = findCell(input, tile);
+    return input[rowIndex].every((one, index) => one === expected[index]);
+}
 
-    const copy = input.map(row => [].concat(...row));
-    const temp = copy[zeroRow][zeroCell];
-    copy[zeroRow][zeroCell] = copy[targetRow][targetCell];
-    copy[targetRow][targetCell] = temp;
-    return copy;
-};
-
-const findAvailableMoves = (input, target) => {
-    const space = findEmptyCell(input);
-
-    const top = getTopMove(input, space, target);
-    const left = getLeftMove(input, space, target);
-    const right = getRightMove(input, space);
-    const bottom = getBottomMove(input, space);
-
-    return [top, left, right, bottom].filter(Boolean)
-};
-
-const getTopMove = (input, [row, cell], [firstRow]) => {
-    if (row <= 0) {
-        return undefined;
+const isCellLinedUp = (input, rowIndex, cellIndex) => {
+    const rowLength = input[rowIndex].length;
+    if (cellIndex === rowLength - 1 || cellIndex === rowLength - 2) {
+        return false
     }
 
-    const topRowIndex = row - 1;
-    if (topRowIndex === 0) {
-        if (JSON.stringify(input[topRowIndex]) === JSON.stringify(firstRow)) {
-            return undefined;
-        }
+    const expected = rowLength * rowIndex + cellIndex + 1;
+    return input[rowIndex][cellIndex] === expected
+}
+
+const getMove = (input, sequence) => {
+    const moves = findAvailableMoves(input);
+    const expected = findTargetTile(input)
+    const prevMove = sequence[sequence.length - 1];
+    if (moves.includes(expected) && prevMove !== expected) {
+        return expected;
     }
 
-    return input[row - 1][cell];
-};
+    // выбрать число которое нужно поднять наверх
+    return findTileToTop(input, moves, sequence);
+}
 
-const getLeftMove = (input, [row, cell], target) => {
-    if (cell <= 0) {
-        return undefined;
+// найти тайл который должен занять место пустого
+const findTargetTile = (input) => {
+    const [rowIndex, cellIndex] = grid.findCoordinatesOfEmptyCell(input);
+    const rowLength = input[rowIndex].length;
+    return rowIndex * rowLength + cellIndex + 1;
+}
+
+const findTileToTop = (input, [top, left, right, bottom], sequence) => {
+    const [rowIndex] = grid.findCoordinatesOfEmptyCell(input);
+    const expectedRow = input[rowIndex].map((one, index) => {
+        return index + 1 + rowIndex * input[rowIndex].length;
+    })
+
+    const prevMove = sequence[sequence.length - 1];
+
+    if (left && !expectedRow.includes(left) && left !== prevMove) {
+        return left;
     }
 
-    const columnIndex = cell - 1;
-    if (columnIndex === 0) {
-        const inputColumn = input.map(row => row[0]);
-        const targetColumn = target.map(row => row[0]);
-        if (JSON.stringify(inputColumn) === JSON.stringify(targetColumn)) {
-            return undefined;
-        }
+    if (top && top !== prevMove) {
+        return top;
     }
 
-    return input[row][cell - 1];
-};
+    if (right && right !== prevMove) {
+        return right;
+    }
 
-const getRightMove = (input, [row, cell]) => {
-    const rowSize = input[0].length;
-    return cell >= rowSize ? undefined : input[row][cell + 1];
-};
+    if (bottom && bottom !== prevMove) {
+        return bottom;
+    }
+}
 
-const getBottomMove = (input, [row, cell]) => {
-    return row === input.length - 1 ? undefined : input[row + 1][cell];
-};
+const move = (input, target) => {
+    const [spaceRow, spaceCell] = grid.findCoordinatesOfEmptyCell(input);
+    const [targetRow, targetCell] = grid.findCellCoordinates(input, target);
 
-const findCell = (input, needle) => {
-    const row = input.find(row => row.includes(needle));
-    const cell = row.findIndex(cell => cell === needle);
-    return [input.findIndex(item => item[0] === row[0]), cell];
-};
+    input[spaceRow][spaceCell] = target;
+    input[targetRow][targetCell] = 0
+}
 
-const findEmptyCell = input => findCell(input, 0);
+const isFinished = (input) => {
+    return input.every((row, rowIndex) => {
+        const multiplier = row.length * rowIndex;
+        return row.every((cell, cellIndex) => {
+            let expected = cellIndex + 1 + multiplier;
+            if (expected === input.length * row.length) {
+                expected = 0;
+            }
 
-const findTargetState = input => {
-    const reduced = input.reduce((accumulator, current) => {
-        accumulator = accumulator.concat(current);
-        return accumulator;
-    }, []);
+            return cell === expected;
+        });
+    })
+}
 
-    const sorted = reduced.sort((a, b) => a - b);
-    const zero = sorted.shift();
-    sorted.push(zero);
-
-    return input.reduce((accumulator, current) => {
-        accumulator.push(sorted.splice(0, current.length));
-        return accumulator;
-    }, []);
-};
-
-const test = [
-    [4, 1, 3],
-    [2, 8, 0],
-    [7, 6, 5]
-];
-const result = slidePuzzle(test);
-
-console.log(result, [8, 2, 4, 1, 2, 8, 5, 6, 8, 5, 6]);
+module.exports = {
+    slidePuzzle,
+    isFinished
+}
