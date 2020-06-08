@@ -159,6 +159,10 @@ const moveEmptyTileByPositiveVerticalOffset = (input, offset) => {
     return temp;
 }
 
+const moveTile = (input, tile, destination) => {
+    //
+}
+
 const copy = (input) => {
     return input.slice().map(row => row.slice())
 }
