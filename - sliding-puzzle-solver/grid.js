@@ -54,7 +54,7 @@ const moveLeft = (input) => {
 
     return copied;
 }
-//
+
 const moveRight = (input) => {
     const [spaceRowIndex, spaceCellIndex] = findCoordinatesOfEmptyCell(input);
     if (spaceCellIndex === 0) {
@@ -83,6 +83,82 @@ const moveUp = (input) => {
     return copied;
 }
 
+const moveEmptyTile = (input, [destRowIndex, destCellIndex]) => {
+    const [spaceRowIndex, spaceCellIndex] = findCoordinatesOfEmptyCell(input);
+
+    const vertical = destRowIndex - spaceRowIndex;
+    const horizontal = destCellIndex - spaceCellIndex;
+
+    const horizontalMoved = moveEmptyTileByHorizontalOffset(input, horizontal);
+    return moveEmptyTileByVerticalOffset(horizontalMoved, vertical)
+}
+
+const moveEmptyTileByHorizontalOffset = (input, offset) => {
+    if (offset === 0) {
+        return copy(input)
+    }
+
+    if (offset < 0) {
+        return moveEmptyTileByNegativeHorizontalOffset(input, offset)
+    }
+
+    return moveEmptyTileByPositiveHorizontalOffset(input, offset);
+}
+
+const moveEmptyTileByNegativeHorizontalOffset = (input, offset) => {
+    const length = Math.abs(offset);
+    let temp = copy(input);
+    for (let i = 0; i < length; ++i) {
+        temp = moveRight(temp);
+    }
+
+    return temp;
+}
+
+const moveEmptyTileByPositiveHorizontalOffset = (input, offset) => {
+    const length = Math.abs(offset);
+    let temp = copy(input);
+    for (let i = 0; i < length; ++i) {
+        temp = moveLeft(temp)
+    }
+
+    return temp;
+}
+
+const moveEmptyTileByVerticalOffset = (input, offset) => {
+    if (offset === 0) {
+        return copy(input)
+    }
+
+    if (offset < 0) {
+        return moveEmptyTileByNegativeVerticalOffset(input, offset)
+    }
+
+    return moveEmptyTileByPositiveVerticalOffset(input, offset)
+}
+
+const moveEmptyTileByNegativeVerticalOffset = (input, offset) => {
+    const length = Math.abs(offset);
+    let temp = copy(input);
+
+    for (let i = 0; i < length; ++i) {
+        temp = moveDown(temp);
+    }
+
+    return temp;
+}
+
+const moveEmptyTileByPositiveVerticalOffset = (input, offset) => {
+    const length = Math.abs(offset);
+    let temp = copy(input);
+
+    for (let i = 0; i < length; ++i) {
+        temp = moveUp(temp);
+    }
+
+    return temp;
+}
+
 const copy = (input) => {
     return input.slice().map(row => row.slice())
 }
@@ -94,5 +170,6 @@ module.exports = {
     moveDown,
     moveLeft,
     moveRight,
-    moveUp
+    moveUp,
+    moveEmptyTile
 }

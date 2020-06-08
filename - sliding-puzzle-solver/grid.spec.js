@@ -127,4 +127,22 @@ describe("Sliding Puzzle Solver", () => {
 
         expect(grid.moveUp(input)).toEqual(input)
     });
+
+    it("should move empty tile", () => {
+        const input = [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 0, 8]
+        ];
+
+        const target = [0, 0];
+
+        const output = [
+            [0, 2, 3],
+            [1, 5, 6],
+            [4, 7, 8]
+        ]
+
+        expect(grid.moveEmptyTile(input, target)).toEqual(output)
+    });
 })
