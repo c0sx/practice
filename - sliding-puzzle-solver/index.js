@@ -20,6 +20,11 @@ const slidePuzzle = (input, snapshots) => {
     return sequence;
 }
 
+// 1. Найти самую верхнюю строку, в которой нужно произвести изменения findActualRow
+// 2. Найти в этом ряду тайл который нужно установить findActualTile
+// 3. Найти в сетке тайл который нужно перенести findCellCoordinates
+// 4. Проверка алгоритма.
+
 // найти самую верхнюю строку в которой нужно произвести изменения
 // найти следующий тайл, который нужно поместить в верхнуюю строку
 // если это не последняя цифра строки, то просто разместить в нужном поле не трогая уже зафиксированные части ранее
@@ -150,7 +155,7 @@ const findTileToTop = (input, [top, left, right, bottom], sequence) => {
 
 const move = (input, target) => {
     const [spaceRow, spaceCell] = grid.findCoordinatesOfEmptyCell(input);
-    const [targetRow, targetCell] = grid.findCellCoordinates(input, target);
+    const [targetRow, targetCell] = grid.findTileCoordinates(input, target);
 
     input[spaceRow][spaceCell] = target;
     input[targetRow][targetCell] = 0
