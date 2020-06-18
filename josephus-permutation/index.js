@@ -15,7 +15,7 @@ function josephus(items, k) {
             step++;
         }
 
-        items = items.filter(Boolean)
+        items = items.filter(item => item !== undefined)
     }
 
     return results;
