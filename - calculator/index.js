@@ -1,14 +1,25 @@
+const Lexer = require("./Lexer");
+const Parser = require("./Parser");
+const Interpreter = require("./Interpreter");
+
 const Calculator = function() {
     this.operators = ["+", "-", "*", "/"]
     this.root = undefined;
 
     this.evaluate = string => {
+        const lexer = new Lexer(string);
+        const parser = new Parser(lexer);
+        const interpreter = new Interpreter(parser);
+        return interpreter.interpret();
+    }
+
+    this.evaluate2 = string => {
         const splitted = string.split("").filter(one => one !== " ");
         const ast = this.buildAST(splitted);
         if (ast instanceof Operator) {
             return ast.evaluate()
         }
-        
+
         return ast.evaluate();
     }
 
