@@ -1,21 +1,54 @@
 const Token = require("./Token")
 
+const mapper = [
+    {
+        condition: token => token === "+",
+        action: () => Token.Plus()
+    },
+    {
+        condition: token => token === "-",
+        action: () => Token.Minus()
+    },
+    {
+        condition: token => token === "*",
+        action: () => Token.Multiply()
+    },
+    {
+        condition: token => token === "/",
+        action: () => Token.Division()
+    },
+    {
+        condition: token => token === "(",
+        action: () => Token.LParen()
+    },
+    {
+        condition: token => token === ")",
+        action: () => Token.RParen()
+    },
+    {
+        condition: token => Number.isInteger(Number(token)),
+        action: token => Token.Integer(token)
+    },
+    {
+        condition: token => token === undefined,
+        action: () => Token.EOF()
+    }
+]
+
 class Lexer {
     constructor(text) {
         this.position = 0;
         this.text = text.split("").filter(char => char !== " ")
-        this.char = this.text[this.position]
     }
 
     advance() {
         this.position += 1;
-        this.char = this.text[this.position]
     }
 
     int() {
         let result = ""
-        while (Number.isInteger(Number(this.char))) {
-            result += this.char;
+        while (Number.isInteger(Number(this.text[this.position]))) {
+            result += this.text[this.position];
             this.advance();
         }
 
@@ -23,40 +56,14 @@ class Lexer {
     }
 
     token() {
-        if (Number.isInteger(Number(this.char))) {
-            return new Token("INTEGER", this.int());
+        if (Number.isInteger(Number(this.text[this.position]))) {
+            return Token.Integer(this.int());
         }
 
-        const char = this.char;
-        if (char === "+") {
-            this.advance()
-            return new Token("PLUS", "+")
-        }
-
-        if (char === "-") {
-            this.advance();
-            return new Token("MINUS", "-")
-        }
-
-        if (char === "*") {
-            this.advance()
-            return new Token("MULTIPLY", "*")
-        }
-
-        if (char === "/") {
-            this.advance();
-            return new Token("DIVISION", "/")
-        }
-
-        if (char === "(") {
-            this.advance()
-            return new Token("LPAREN", "(")
-        }
-
-        if (char === ")") {
-            this.advance()
-            return new Token("RPAREN", ")")
-        }
+        const char = this.text[this.position];
+        const action = mapper.find(one => one.condition(char));
+        this.advance();
+        return action.action(char);
     }
 }
 

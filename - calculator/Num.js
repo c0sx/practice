@@ -3,6 +3,10 @@ class Num {
         this.token = token;
         this.value = token.value
     }
+
+    evaluate() {
+        return this.value;
+    }
 }
 
 module.exports = Num;

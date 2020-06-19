@@ -16,13 +16,21 @@ describe("Calculator.Lexer", () => {
         const tokens = collectTokens(lexer);
         expect(tokens).toEqual([2, "+", "(", 2, "+", 3, ")", "*", 2])
     });
+
+    it("should tokenize correctly", () => {
+        const expression = "127";
+        const lexer = new Lexer(expression);
+
+        const tokens = collectTokens(lexer);
+        expect(tokens).toEqual([127])
+    });
 })
 
 const collectTokens = (lexer) => {
     const tokens = [];
     while (true) {
         const token = lexer.token();
-        if (token === undefined) {
+        if (token.value === undefined) {
             break;
         }
 
