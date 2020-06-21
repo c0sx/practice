@@ -9,5 +9,6 @@ describe("Convert All Cases", () => {
         expect(changeCase("valid-input", "huh???")).toEqual(undefined);
         expect(changeCase("", "camel")).toEqual("");
         expect(changeCase("tyhjgwxclc", "camel")).toEqual("tyhjgwxclc")
+        expect(changeCase("kekLul", "camel")).toEqual("kekLul")
     });
 })
