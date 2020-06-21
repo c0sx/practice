@@ -6,6 +6,8 @@ module.exports = {
     coverageDirectory: "coverage",
     coveragePathIgnorePatterns: [
         "/node_modules/",
+        "/coverage",
+        "/jest.config.js"
     ],
     moduleDirectories: [
         "node_modules"
@@ -14,6 +16,7 @@ module.exports = {
     moduleFileExtensions: ["js"],
     testEnvironment: "node",
     transformIgnorePatterns: [
-        "/node_modules/"
+        "/node_modules/",
+        "/coverage"
     ],
 };
