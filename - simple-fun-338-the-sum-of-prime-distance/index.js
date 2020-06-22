@@ -1,40 +1,31 @@
 function sumOfPrimeDistance(arr) {
     const pairs = getPairs2(arr);
-    const primed = calculatePrimes(pairs);
+    let primed = calculatePrimes(pairs);
 
-    const length = arr.length - 1;
-    const total = length * length / 2
-
+    let total = sumRow(primed);
     let step = 1;
-    while (step < total) {
-        for (let i = 0; i < primed.length - 1; ++i) {
-            const left = primed[i];
-            const right = primed[i + step];
 
-            const merged = merge(left, right);
-            primed.push(merged)
+    while (step < primed.length) {
+        for (let i = 0; i < primed.length - step; ++i) {
+            const [left] = primed[i];
+            const [_, right] = primed[i + step];
+
+            const slice = merge2(primed, left, right);
+            total += sumRow(slice)
         }
 
         step++;
     }
 
-    return sum;
-    //
-    // for (let i = 0; i < arr.length - 1; i++) {
-    //     acc.push([current, original[step]])
-    // }
+    return total;
+}
 
+const sumRow = row => row.reduce((acc, [l, r, p]) => acc + p, 0)
 
-    // return primed;
-
-    //     const length = arr.length - 1;
-    //     const total = length * length / 2
-
-    // const pairs = getPairs(arr);
-    // return pairs.reduce((acc, [left, right]) => {
-    //     const primes = getPrimesInInterval(left, right);
-    //     return acc + primes.length;
-    // }, 0)
+const merge2 = (row, left, right) => {
+    const start = row.findIndex(([a]) => a === left);
+    const end = row.findIndex(([a, b]) => b === right);
+    return row.slice(start, end + 1);
 }
 
 const merge = (left, right) => {
@@ -63,16 +54,6 @@ const calculatePrimes = pairs => {
     });
 }
 
-const getPairs = arr => {
-    return arr.reduce((acc, current, index, original) => {
-        for (let step = index + 1; step < original.length; step++) {
-            acc.push([current, original[step]])
-        }
-
-        return acc;
-    }, []);
-}
-
 const getPrimesInInterval = (left, right) => {
     const primes = []
 
@@ -88,22 +69,14 @@ const getPrimesInInterval = (left, right) => {
     return primes;
 }
 
-const cache = new Map();
 function isPrime(x) {
-    const cached = cache.get(x);
-    if (cached !== undefined) {
-        return cached
-    }
-
     const size = Math.trunc(Math.pow(x, 1 / 2));
     for (let i = 2; i <= size; ++i) {
         if (x % i === 0) {
-            cache.set(x, false);
             return false;
         }
     }
 
-    cache.set(x, true);
     return true;
 }
 
