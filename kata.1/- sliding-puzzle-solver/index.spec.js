@@ -1,4 +1,4 @@
-const { slidePuzzle, isFinished } = require("./")
+const { slidePuzzle, isFinished } = require("./index")
 
 const validate = (input, sequence) => {
     sequence.forEach(tile => {

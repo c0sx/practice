@@ -1,4 +1,4 @@
-const ulamSequence = require("./")
+const ulamSequence = require("./index")
 
 describe("Ulam Sequence (performance edition)", () => {
     it("tests", () => {
