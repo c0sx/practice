@@ -13,3 +13,5 @@ const sum = value => {
 
     return add(value);
 }
+
+console.log(sum(5)(1)(10));

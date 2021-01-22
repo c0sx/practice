@@ -16,6 +16,28 @@ numbers.set("L", 50);
 
 const names = ["George VI", "William II", "Elizabeth I", "William I", "William IX", "William XI", "William L", "William XL", "Admiral XXVIII"];
 
+const ordinalToDecimal = ordinal => {
+    const symbols = [ ... ordinal.split("") ];
+    let decimal = 0;
+    let stack = "";
+    while (symbols.length) {
+        const nextDigit = stack + symbols[0];
+        if (!numbers.has(nextDigit)) {
+            decimal += numbers.get(stack);
+            stack = "";
+        }
+
+        stack += symbols.shift();
+    }
+
+    decimal += numbers.get(stack);
+    if (stack.length > 0) {
+        decimal += numbers.get(stack);
+    }
+
+    return decimal;
+};
+
 const getSortedList = (names) => {
     const grouped = names.reduce((map, royalName) => {
         const [name] = royalName.split(" ");
@@ -48,25 +70,4 @@ const getSortedList = (names) => {
     return resultNames;
 }
 
-const ordinalToDecimal = ordinal => {
-    const symbols = [ ... ordinal.split("") ];
-    let decimal = 0;
-    let stack = "";
-    while (symbols.length) {
-        const nextDigit = stack + symbols[0];
-        if (!numbers.has(nextDigit)) {
-            decimal += numbers.get(stack);
-            stack = "";
-        }
-
-        stack += symbols.shift();
-    }
-
-    decimal += numbers.get(stack);
-    if (stack.length > 0) {
-        decimal += numbers.get(stack);
-    }
-
-    return decimal;
-};
-
+console.log(getSortedList(names));
