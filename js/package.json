@@ -12,6 +12,6 @@
     "prettier": "^2.0.5"
   },
   "scripts": {
-    "test": "jest"
+    "test": "../node_modules/.bin/jest"
   }
 }
