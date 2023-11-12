@@ -9,7 +9,7 @@ const myAtoi = (s) => {
   while (s[index] === " ") {
     index += 1;
   }
-  
+
   if (s[index] === "+") {
     index += 1;
   } else if (s[index] === "-") {
