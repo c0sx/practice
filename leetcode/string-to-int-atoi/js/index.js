@@ -9,6 +9,7 @@ const myAtoi = (s) => {
   while (s[index] === " ") {
     index += 1;
   }
+  
   if (s[index] === "+") {
     index += 1;
   } else if (s[index] === "-") {
@@ -23,7 +24,7 @@ const myAtoi = (s) => {
     }
 
     const digit = Number(c);
-    value = value === 0 ? digit : value * 10 + digit;
+    value = value * 10 + digit;
 
     index += 1;
   }
