@@ -3,22 +3,21 @@ pub fn is_subsequence(s: String, t: String) -> bool {
         return true;
     }
 
-    let mut s_chars = s.chars();
-    let mut t_chars = t.chars();
-    let mut s_char = s_chars.nth(0).unwrap();
+    let s_chars = s.chars().collect::<Vec<char>>();
+    let mut index = 0;
 
-    while let Some(t_char) = t_chars.next() {
+    for t_char in t.chars() {
+        if index == s_chars.len() {
+            return true;
+        }
+
+        let s_char = s_chars[index];
         if t_char == s_char {
-            let next = match s_chars.next() {
-                Some(c) => c,
-                None => return true,
-            };
-
-            s_char = next;
+            index += 1;
         }
     }
 
-    return false;
+    return index == s_chars.len();
 }
 
 #[cfg(test)]
