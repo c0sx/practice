@@ -1,47 +1,32 @@
-pub fn roman_to_int(s: String) -> i32 {
-    let chars = s.chars().collect::<Vec<char>>();
+pub fn roman_to_int2(s: String) -> i32 {
+    let mut chars = s.chars().rev();
+    let mut prev = 0;
 
-    let values = chars.into_iter()
-        .map(|c| {
-            match c {
-                'I' => 1,
-                'V' => 5,
-                'X' => 10,
-                'L' => 50,
-                'C' => 100,
-                'D' => 500,
-                'M' => 1000,
-                _ => panic!("invalid roman digit")
-            }
-        })
-        .collect::<Vec<i32>>();
+    let map = std::collections::HashMap::from([
+        ('I', 1),
+        ('V', 5),
+        ('X', 10),
+        ('L', 50),
+        ('C', 100),
+        ('D', 500),
+        ('M', 1000),
+    ]);
 
-    let mut num = 0;
-    let mut accumulator = 0;
+    let mut result = 0;
 
-    let mut i = 0;
-    while i < values.len() {
-        let current = values[i];
-        let next = *values.get(i + 1).or(Some(&0)).unwrap();
+    while let Some(c) = chars.next() {
+        let value = *map.get(&c).unwrap();
 
-        if current == next {
-            accumulator += current;
-
-            i += 1;
-        } else if current < next {
-            num += next - (current - accumulator);
-            accumulator = 0;
-
-            i += 2;
+        if value < prev {
+            result -= value;
         } else {
-            num += current + accumulator;
-            accumulator = 0;
-
-            i += 1;
+            result += value;
         }
+
+        prev = value;
     }
 
-    num
+    return result;
 }
 
 #[cfg(test)]
@@ -51,7 +36,7 @@ mod tests {
     #[test]
     fn it_works() {
         let roman = String::from("III");
-        let result = roman_to_int(roman);
+        let result = roman_to_int2(roman);
 
         assert_eq!(result, 3);
     }
@@ -59,7 +44,7 @@ mod tests {
     #[test]
     fn it_works2() {
         let roman = String::from("LVIII");
-        let result = roman_to_int(roman);
+        let result = roman_to_int2(roman);
 
         assert_eq!(result, 58);
     }
@@ -67,8 +52,16 @@ mod tests {
     #[test]
     fn it_works3() {
         let roman = String::from("MCM");
-        let result = roman_to_int(roman);
+        let result = roman_to_int2(roman);
 
         assert_eq!(result, 1900)
+    }
+
+    #[test]
+    fn it_works4() {
+        let roman = String::from("MCMXCIV");
+        let result = roman_to_int2(roman);
+
+        assert_eq!(result, 1994);
     }
 }
