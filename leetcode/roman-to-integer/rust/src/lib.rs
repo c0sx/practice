@@ -1,4 +1,4 @@
-pub fn roman_to_int2(s: String) -> i32 {
+pub fn roman_to_int(s: String) -> i32 {
     let mut chars = s.chars().rev();
     let mut prev = 0;
 
@@ -36,7 +36,7 @@ mod tests {
     #[test]
     fn it_works() {
         let roman = String::from("III");
-        let result = roman_to_int2(roman);
+        let result = roman_to_int(roman);
 
         assert_eq!(result, 3);
     }
@@ -44,7 +44,7 @@ mod tests {
     #[test]
     fn it_works2() {
         let roman = String::from("LVIII");
-        let result = roman_to_int2(roman);
+        let result = roman_to_int(roman);
 
         assert_eq!(result, 58);
     }
@@ -52,7 +52,7 @@ mod tests {
     #[test]
     fn it_works3() {
         let roman = String::from("MCM");
-        let result = roman_to_int2(roman);
+        let result = roman_to_int(roman);
 
         assert_eq!(result, 1900)
     }
@@ -60,7 +60,7 @@ mod tests {
     #[test]
     fn it_works4() {
         let roman = String::from("MCMXCIV");
-        let result = roman_to_int2(roman);
+        let result = roman_to_int(roman);
 
         assert_eq!(result, 1994);
     }
