@@ -1,13 +1,14 @@
-use std::collections::HashSet;
+use std::{cmp::min, collections::HashSet};
 
-pub fn longest_common_prefix(mut input: Vec<String>) -> String {
+pub fn longest_common_prefix_1(mut input: Vec<String>) -> String {
     if input.len() == 0 {
         return String::new();
     }
 
     input.sort_by(|a, b| a.len().cmp(&b.len()));
 
-    let shortest = input.get(0)
+    let shortest = input
+        .get(0)
         .ok_or("")
         .unwrap()
         .chars()
@@ -31,6 +32,28 @@ pub fn longest_common_prefix(mut input: Vec<String>) -> String {
     longest_prefix
 }
 
+pub fn longest_common_prefix(strings: Vec<String>) -> String {
+    let mut strings = strings;
+    strings.sort_by(|a, b| a.cmp(b));
+
+    let shortest = &strings[0];
+    let longest = &strings[strings.len() - 1];
+    let min_length = min(shortest.len(), longest.len());
+    let mut index = 0;
+
+    while index < min_length {
+        if shortest.chars().nth(index) != longest.chars().nth(index) {
+            break;
+        }
+
+        index += 1;
+    }
+
+    let prefix = &shortest[0..index];
+
+    return String::from(prefix);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -40,7 +63,7 @@ mod tests {
         let input = vec![
             String::from("flower"),
             String::from("flow"),
-            String::from("flight")
+            String::from("flight"),
         ];
 
         let result = longest_common_prefix(input);
@@ -53,7 +76,7 @@ mod tests {
         let input = vec![
             String::from("dog"),
             String::from("racecar"),
-            String::from("car")
+            String::from("car"),
         ];
 
         let result = longest_common_prefix(input);
@@ -66,7 +89,7 @@ mod tests {
         let input = vec![
             String::from("cir"),
             String::from("car"),
-            String::from("car")
+            String::from("car"),
         ];
 
         let result = longest_common_prefix(input);
@@ -76,10 +99,7 @@ mod tests {
 
     #[test]
     fn it_works4() {
-        let input = vec![
-            String::from("ab"),
-            String::from("a"),
-        ];
+        let input = vec![String::from("ab"), String::from("a")];
 
         let result = longest_common_prefix(input);
 
