@@ -6,19 +6,20 @@ pub fn is_palindrome(s: String) -> bool {
         .to_ascii_lowercase();
 
     let size = s.len();
+    let mut l = 0;
 
-    for (i, l) in s.char_indices() {
-        let r = s.chars().nth(size - i - 1).unwrap();
+    while l < size / 2 {
+        let c1 = s.chars().nth(l).unwrap();
+        let c2 = s.chars().nth(size - l - 1).unwrap();
 
-        if l != r {
+        if c1 != c2 {
             return false;
         }
+
+        l += 1;
     }
 
     return true;
-
-    // let rev = s.chars().rev().collect::<String>();
-    // return s == rev
 }
 
 #[cfg(test)]
