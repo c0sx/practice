@@ -1,4 +1,4 @@
-pub fn remove_occurrences(s: String, part: String) -> String {
+pub fn remove_occurrences2(s: String, part: String) -> String {
     let mut chars: Vec<char> = s.chars().collect();
     let needle: Vec<char> = part.chars().collect();
 
@@ -24,6 +24,35 @@ pub fn remove_occurrences(s: String, part: String) -> String {
     chars.iter().collect()
 }
 
+pub fn remove_occurrences(s: String, part: String) -> String {
+    let ss = s.as_bytes();
+    let pp = part.as_bytes();
+
+    let mut stack: Vec<char> = vec![];
+
+    for i in 0..ss.len() {
+        stack.push(ss[i] as char);
+
+        let mut j = pp.len();
+
+        while let Some(&c) = stack.last() {
+            if j > 0 && pp[j - 1] as char == c {
+                stack.pop();
+                j -= 1;
+            } else {
+                break;
+            }
+        }
+
+        while j > 0 && j < pp.len() {
+            stack.push(pp[j] as char);
+            j += 1;
+        }
+    }
+
+    stack.iter().collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -47,5 +76,32 @@ mod tests {
         let result = remove_occurrences(String::from("ababcc"), String::from("abc"));
 
         assert_eq!(result, "");
+    }
+
+    #[test]
+    fn it_works4() {
+        let result = remove_occurrences(
+            String::from("gjzgbpggjzgbpgsvpwdk"),
+            String::from("gjzgbpg"),
+        );
+
+        assert_eq!(result, "svpwdk");
+    }
+
+    #[test]
+    fn it_works5() {
+        let result = remove_occurrences(String::from("abcabcdefgh"), String::from("abc"));
+
+        assert_eq!(result, "defgh");
+    }
+
+    #[test]
+    fn it_works6() {
+        let result = remove_occurrences(
+            String::from("ixcupqoixcupqokevnpokevnpoknqywmlhevgc"),
+            String::from("ixcupqokevnpo"),
+        );
+
+        assert_eq!(result, "knqywmlhevgc");
     }
 }
