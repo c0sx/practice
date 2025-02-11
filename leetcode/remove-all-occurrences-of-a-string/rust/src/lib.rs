@@ -13,7 +13,7 @@ pub fn remove_occurrences(s: String, part: String) -> String {
         if j == needle.len() {
             chars.drain(i..i + j);
 
-            i = if j > i { 0 } else { i - j }
+            i = if i > 0 { i - 1 } else { 0 }
         } else {
             i += 1;
         }
