@@ -13,7 +13,7 @@ pub fn remove_occurrences(s: String, part: String) -> String {
         if j == needle.len() {
             chars.drain(i..i + j);
 
-            i = if i > 0 { i - 1 } else { 0 }
+            i = if j > i { 0 } else { i - j }
         } else {
             i += 1;
         }
@@ -40,5 +40,12 @@ mod tests {
         let result = remove_occurrences(String::from("axxxxyyyyb"), String::from("xy"));
 
         assert_eq!(result, "ab");
+    }
+
+    #[test]
+    fn it_works3() {
+        let result = remove_occurrences(String::from("ababcc"), String::from("abc"));
+
+        assert_eq!(result, "");
     }
 }
