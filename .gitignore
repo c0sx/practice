@@ -1,3 +1,5 @@
 node_modules/
 target/
 coverage/
+.zig-cache/
+.DS_Store
