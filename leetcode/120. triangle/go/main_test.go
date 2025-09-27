@@ -24,15 +24,15 @@ func TestMinimumTotal(t *testing.T) {
 			},
 			want: 11,
 		},
-		// {
-		// 	name: "test2",
-		// 	args: args{
-		// 		triangle: [][]int{
-		// 			{-10},
-		// 		},
-		// 	},
-		// 	want: -10,
-		// },
+		{
+			name: "test2",
+			args: args{
+				triangle: [][]int{
+					{-10},
+				},
+			},
+			want: -10,
+		},
 	}
 
 	for _, tt := range tests {
