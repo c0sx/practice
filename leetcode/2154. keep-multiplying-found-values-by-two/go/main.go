@@ -1,0 +1,15 @@
+package leetcode2154
+
+import "sort"
+
+func findFinalValue(nums []int, original int) int {
+	sort.Ints(nums)
+
+	for _, num := range nums {
+		if num == original {
+			original *= 2
+		}
+	}
+
+	return original
+}
