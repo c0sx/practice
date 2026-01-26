@@ -2,24 +2,7 @@ package leetcode1200
 
 import "testing"
 
-/**
-Example 1:
-
-Input: arr = [4,2,1,3]
-Output: [[1,2],[2,3],[3,4]]
-
-Example 2:
-
-Input: arr = [1,3,6,10,15]
-Output: [[1,3]]
-
-Example 3:
-
-Input: arr = [3,8,-10,23,19,-4,-14,27]
-Output: [[-14,-10],[19,23],[23,27]]
-*/
-
-func Test_minimumAbsDifference(t *testing.T) {
+func TestMinimumAbsDifference(t *testing.T) {
 	tests := []struct {
 		name string
 		arr  []int
